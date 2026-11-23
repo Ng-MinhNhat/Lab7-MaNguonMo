@@ -1,0 +1,31 @@
+name: Deploy HTML to Somee
+
+# Kích hoạt luồng công việc mỗi khi push (đẩy) code lên nhánh main
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  web-deploy:
+    name: Deploy to Somee via FTP
+    runs-on: ubuntu-latest
+
+    steps:
+      # Lấy mã nguồn mới nhất từ kho lưu trữ
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      # Đẩy file lên Somee qua giao thức FTP (File Transfer Protocol - Giao thức truyền tệp)
+      - name: Sync files via FTP
+        uses: SamKirkland/FTP-Deploy-Action@v4.3.5
+        with:
+          server: ${{ secrets.FTP_SERVER }}
+          username: ${{ secrets.FTP_USERNAME }}
+          password: ${{ secrets.FTP_PASSWORD }}
+          protocol: ftp
+          server-dir: /www.lab7cicd1417.somee.com/ # Đường dẫn thư mục web trên Somee
+          exclude: |
+            **/.git*
+            **/.git*/**
+            .github/**
